@@ -1,9 +1,0 @@
-# GraphChatEngine Loader – Python dependencies
-# Milestone 04: Kafka Consumer
-# Pin exact versions for reproducible builds.
-
-# --- Kafka consumer ---
-kafka-python==2.0.2
-
-# --- Future (Milestone 05+) ---
-# neo4j==5.19.0            # Neo4j driver

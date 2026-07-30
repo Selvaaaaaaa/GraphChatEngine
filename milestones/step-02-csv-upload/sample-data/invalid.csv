@@ -1,8 +1,0 @@
-This is not a valid CSV file.
-It contains random text that cannot be parsed as comma-separated values.
-
-[ERROR SIMULATION]
-!!@@##$$%%
-row with | pipe | delimiters | that | pandas | cannot | reconcile
-"unclosed quote field
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
