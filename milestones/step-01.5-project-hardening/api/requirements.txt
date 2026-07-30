@@ -1,0 +1,17 @@
+# GraphChatEngine API – Python dependencies
+# Milestone 02: CSV Upload & Validation
+# Pin exact versions for reproducible builds.
+
+# --- Web framework ---
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+
+# --- File upload support (required by FastAPI UploadFile) ---
+python-multipart==0.0.9
+
+# --- CSV processing ---
+pandas==2.2.2
+
+# --- Future (Milestone 03+) ---
+# kafka-python==2.0.2    # Kafka producer/consumer
+# neo4j==5.19.0          # Neo4j driver

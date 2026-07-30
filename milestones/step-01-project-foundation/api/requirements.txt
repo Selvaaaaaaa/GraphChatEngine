@@ -1,0 +1,6 @@
+# GraphChatEngine API – Python dependencies
+# Milestone 01: Project Foundation
+# Pin exact versions for reproducible builds.
+
+fastapi==0.111.0
+uvicorn[standard]==0.29.0

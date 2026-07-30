@@ -1,0 +1,8 @@
+# GraphChatEngine Loader – Python dependencies
+# Milestone 01: Project Foundation
+# Only stdlib is used in this milestone; this file is a placeholder
+# for future dependencies (kafka-python, neo4j driver, etc.).
+
+# No third-party packages needed yet.
+# kafka-python==2.0.2      # Uncomment in Milestone 02
+# neo4j==5.19.0            # Uncomment in Milestone 03

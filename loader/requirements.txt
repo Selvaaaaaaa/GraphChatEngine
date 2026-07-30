@@ -1,0 +1,6 @@
+# GraphChatEngine Loader – Python dependencies
+# Milestone 05: Neo4j Graph Loader
+# Pin exact versions for reproducible builds.
+
+kafka-python==2.0.2
+neo4j==5.19.0

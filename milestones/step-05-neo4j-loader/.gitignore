@@ -1,0 +1,41 @@
+# =============================================================
+# .gitignore – GraphChatEngine
+# =============================================================
+
+# --- Environment / secrets ---
+.env
+*.env.local
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# --- Docker volumes (if bind-mounted locally) ---
+data/
+logs/
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Pytest / coverage ---
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# --- Node (if a Node-based UI tool is added later) ---
+node_modules/

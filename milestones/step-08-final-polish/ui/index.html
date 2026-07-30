@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GraphChatEngine – CSV → Kafka → Neo4j Knowledge Graph Chatbot Interface" />
+  <title>GraphChatEngine | Graph Knowledge Chatbot</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>GraphChatEngine</h1>
+          <p class="subtitle">CSV → Kafka → Neo4j → Chatbot</p>
+        </div>
+      </div>
+
+      <!-- Pipeline Status Card -->
+      <div class="pipeline-card">
+        <h3>Pipeline Architecture</h3>
+        <div class="pipeline-steps">
+          <div class="p-step">
+            <span class="p-icon">📄</span>
+            <span class="p-name">CSV</span>
+          </div>
+          <span class="p-arrow">→</span>
+          <div class="p-step">
+            <span class="p-icon">⚡</span>
+            <span class="p-name">Kafka</span>
+          </div>
+          <span class="p-arrow">→</span>
+          <div class="p-step">
+            <span class="p-icon">🔗</span>
+            <span class="p-name">Neo4j</span>
+          </div>
+          <span class="p-arrow">→</span>
+          <div class="p-step">
+            <span class="p-icon">🤖</span>
+            <span class="p-name">Chat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Example Questions -->
+      <div class="sidebar-section">
+        <h3>Example Questions</h3>
+        <div class="quick-chips">
+          <button class="quick-chip" onclick="askPreset('How many customers are there?')">
+            <span class="chip-dot">•</span> How many customers are there?
+          </button>
+          <button class="quick-chip" onclick="askPreset('List all customers')">
+            <span class="chip-dot">•</span> List all customers
+          </button>
+          <button class="quick-chip" onclick="askPreset('Show customer 1')">
+            <span class="chip-dot">•</span> Show customer 1
+          </button>
+          <button class="quick-chip" onclick="askPreset('Show customers from Chennai')">
+            <span class="chip-dot">•</span> Show customers from Chennai
+          </button>
+          <button class="quick-chip" onclick="askPreset('Show customers from Coimbatore')">
+            <span class="chip-dot">•</span> Show customers from Coimbatore
+          </button>
+          <button class="quick-chip" onclick="askPreset('Show all emails')">
+            <span class="chip-dot">•</span> Show all emails
+          </button>
+          <button class="quick-chip" onclick="askPreset('Show all cities')">
+            <span class="chip-dot">•</span> Show all cities
+          </button>
+        </div>
+      </div>
+
+      <!-- System Health Indicator -->
+      <div class="sidebar-footer">
+        <div class="health-badge" id="healthBadge">
+          <span class="health-dot" id="healthDot"></span>
+          <span id="healthStatus">Checking API...</span>
+        </div>
+        <button class="clear-btn" id="clearBtnSidebar" onclick="clearChat()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          Clear Chat
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <main class="main-chat">
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <div class="header-info">
+          <h2>Graph Knowledge Chatbot</h2>
+          <span class="connection-status">
+            <span class="status-indicator"></span> Direct Neo4j Query Engine
+          </span>
+        </div>
+        <button class="clear-btn-mobile" onclick="clearChat()">Clear Chat</button>
+      </header>
+
+      <!-- Scrollable Conversation Log -->
+      <div class="chat-log" id="chatLog">
+        <!-- Welcome Message -->
+        <div class="welcome-card" id="welcomeCard">
+          <div class="bot-avatar">🤖</div>
+          <div class="welcome-content">
+            <h2>Hello!</h2>
+            <p>Ask me questions about the graph database.</p>
+            <div class="welcome-chips">
+              <button class="welcome-chip" onclick="askPreset('How many customers are there?')">
+                • How many customers are there?
+              </button>
+              <button class="welcome-chip" onclick="askPreset('List all customers')">
+                • List all customers
+              </button>
+              <button class="welcome-chip" onclick="askPreset('Show customer 1')">
+                • Show customer 1
+              </button>
+              <button class="welcome-chip" onclick="askPreset('Show customers from Chennai')">
+                • Show customers from Chennai
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="input-container">
+        <form class="chat-form" id="chatForm" onsubmit="handleFormSubmit(event)">
+          <input
+            type="text"
+            id="userInput"
+            class="chat-input"
+            placeholder="Ask a question about the graph database... (e.g. How many customers are there?)"
+            autocomplete="off"
+          />
+          <button type="submit" id="sendBtn" class="send-btn" title="Send Question">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            <span>Send</span>
+          </button>
+        </form>
+        <div class="input-footer">
+          <span>Queries execute directly against Neo4j via FastAPI backend.</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
