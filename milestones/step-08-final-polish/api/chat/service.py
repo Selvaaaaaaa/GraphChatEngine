@@ -1,21 +1,16 @@
 """
 api/chat/service.py
 -------------------
-GraphChatEngine – Chat Service Layer
-
-Milestone 06: Graph Query API and Chat Backend
+GraphChatEngine – Chat Service Layer with Intelligent NLU Fallback
 
 Responsibilities:
-  1. Receive user question
-  2. Map question to Cypher query using QueryMapper
-  3. Execute query via Neo4jChatRepository
-  4. Format answer string
-  5. Log required execution metrics:
-     - Question received
-     - Cypher generated
-     - Execution time
-     - Number of records returned
-  6. Return structured response payload
+  1. Receive user natural language question.
+  2. Normalize and map question via QueryMapper.
+  3. Return static metadata answer if it's a dataset info question.
+  4. Execute Cypher query via Neo4jChatRepository if graph query.
+  5. Format rich response strings.
+  6. Return smart suggestion guidance if question is unsupported.
+  7. Log execution metrics (Question, Cypher, Timing ms, Records count).
 """
 
 import logging
@@ -27,7 +22,19 @@ from api.chat.repository import Neo4jChatRepository, Neo4jChatRepositoryError
 
 logger = logging.getLogger("api.chat.service")
 
-UNSUPPORTED_ANSWER = "Sorry, I can answer only questions about the graph database."
+SMART_SUGGESTIONS_ANSWER = (
+    "I can currently help with questions like:\n"
+    "• Customer count\n"
+    "• Customer details & search by name/ID\n"
+    "• Customers by city\n"
+    "• Email addresses & cities\n"
+    "• Dataset information\n\n"
+    "Try asking:\n"
+    "• How many customers are there?\n"
+    "• Show customer 1\n"
+    "• Show Selvaa\n"
+    "• Show customers from Chennai"
+)
 
 
 class ChatService:
@@ -45,25 +52,36 @@ class ChatService:
         """
         start_time = time.perf_counter()
 
-        # Requirement 6: Log Question received
         logger.info("Question received | question='%s'", question)
 
         query_spec = self.query_mapper.map_question(question)
 
-        # Requirement 3: Return fallback for unsupported questions
+        # 1. Smart suggestion fallback for unsupported questions
         if not query_spec:
             execution_time_ms = (time.perf_counter() - start_time) * 1000
             logger.info(
-                "Unsupported question | question='%s' | Cypher generated=NONE | Execution time=%.2f ms | Records=0",
+                "Unsupported question | question='%s' | Cypher=NONE | Execution time=%.2f ms | Records=0",
                 question,
                 execution_time_ms,
             )
-            return {"answer": UNSUPPORTED_ANSWER}
+            return {"answer": SMART_SUGGESTIONS_ANSWER}
 
-        # Requirement 6: Log Cypher generated
+        # 2. Metadata / Local information questions (No Neo4j query required)
+        if query_spec.is_metadata_query:
+            execution_time_ms = (time.perf_counter() - start_time) * 1000
+            logger.info(
+                "Metadata question matched | question='%s' | intent='%s' | Execution time=%.2f ms",
+                question,
+                query_spec.question_key,
+                execution_time_ms,
+            )
+            return {"answer": query_spec.static_answer or query_spec.formatter([])}
+
+        # 3. Cypher Graph Query Execution
         logger.info(
-            "Cypher generated | question='%s' | cypher='%s' | params=%s",
+            "Cypher generated | question='%s' | intent='%s' | cypher='%s' | params=%s",
             question,
+            query_spec.question_key,
             query_spec.cypher,
             query_spec.params,
         )
@@ -73,9 +91,8 @@ class ChatService:
             execution_time_ms = (time.perf_counter() - start_time) * 1000
             records_count = len(records)
 
-            # Requirement 6: Log Execution time and Number of records returned
             logger.info(
-                "Query executed successfully | Execution time=%.2f ms | Number of records returned=%d",
+                "Query executed successfully | Execution time=%.2f ms | Records returned=%d",
                 execution_time_ms,
                 records_count,
             )
@@ -86,7 +103,6 @@ class ChatService:
             return {"answer": answer_text}
 
         except Neo4jChatRepositoryError:
-            # Propagate typed repository error to controller
             raise
         except Exception as exc:
             execution_time_ms = (time.perf_counter() - start_time) * 1000
